@@ -1,0 +1,7 @@
+#!/bin/bash
+
+shopt -s extglob
+
+cd ~/dotfiles
+ls !(bin|setupdotfiles) | xargs -I {} ln -s ~/dotfiles/{} ~/.{}
+ln -s ~/dotfiles/bin ~/bin
