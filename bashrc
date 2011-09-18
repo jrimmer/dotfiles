@@ -2,6 +2,7 @@
 #
 # Help from
 # Ryan Tomayko <http://tomayko.com/about>
+# Others
 
 # the basics
 : ${HOME=~}
@@ -124,39 +125,46 @@ ACK_PAGER_COLOR="$PAGER"
 # PROMPT
 #
 
-RED="\[\033[0;31m\]"
-BROWN="\[\033[0;33m\]"
-GREY="\[\033[0;97m\]"
-BLUE="\[\033[0;34m\]"
-PS_CLEAR="\[\033[0m\]"
-SCREEN_ESC="\[\033k\033\134\]"
-
-if [ "$LOGNAME" = "root" ]; then
-    COLOR1="${RED}"
-    COLOR2="${BROWN}"
-    P="#"
-else
-    COLOR1="${BLUE}"
-    COLOR2="${BROWN}"
-    P="\$"
+if [[ $COLORTERM = gnome-* && $TERM = xterm ]] && infocmp gnome-256color >/dev/null 2>&1; then export TERM=gnome-256color
+elif infocmp xterm-256color >/dev/null 2>&1; then export TERM=xterm-256color
 fi
 
-prompt_simple() {
-    unset PROMPT_COMMAND
-    PS1="[\u@\h:\w]\$ "
-    PS2="> "
+if tput setaf 1 &> /dev/null; then
+  tput sgr0
+  if [[ $(tput colors) -ge 256 ]] 2>/dev/null; then
+    MAGENTA=$(tput setaf 9)
+    ORANGE=$(tput setaf 172)
+    GREEN=$(tput setaf 190)
+    PURPLE=$(tput setaf 141)
+    WHITE=$(tput setaf 256)
+  else
+    MAGENTA=$(tput setaf 5)
+    ORANGE=$(tput setaf 4)
+    GREEN=$(tput setaf 2)
+    PURPLE=$(tput setaf 1)
+    WHITE=$(tput setaf 7)
+  fi
+  BOLD=$(tput bold)
+  RESET=$(tput sgr0)
+else
+  MAGENTA="\033[1;31m"
+  ORANGE="\033[1;33m"
+  GREEN="\033[1;32m"
+  PURPLE="\033[1;35m"
+  WHITE="\033[1;37m"
+  BOLD=""
+  RESET="\033[m"
+fi
+
+function parse_git_dirty() {
+  [[ $(git status 2> /dev/null | tail -n1) != "nothing to commit (working directory clean)" ]] && echo "*"
 }
 
-prompt_compact() {
-    unset PROMPT_COMMAND
-    PS1="${COLOR1}${P}${PS_CLEAR} "
-    PS2="> "
+function parse_git_branch() {
+  git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/\1$(parse_git_dirty)/"
 }
 
-prompt_color() {
-    PS1="${GREY}[${COLOR1}\u${GREY}@${COLOR2}\h${GREY}:${COLOR1}\W${GREY}]${COLOR2}$P${PS_CLEAR} "
-    PS2="\[[33;1m\]continue \[[0m[1m\]> "
-}
+PS1="\[${BOLD}${MAGENTA}\]\u \[$WHITE\]at \[$ORANGE\]\h \[$WHITE\]in \[$GREEN\]\w\[$WHITE\]\$([[ -n \$(git branch 2> /dev/null) ]] && echo \" on \")\[$PURPLE\]\$(parse_git_branch)\[$WHITE\]\n\$ \[$RESET\]"
 
 #
 # Aliases
@@ -309,13 +317,23 @@ test -r ~/.shenv &&
 PATH=$(puniq $PATH)
 MANPATH=$(puniq $MANPATH)
 
-# Use the color prompt by default when interactive
-test -n "$PS1" &&
-prompt_color
+#
+# Functions
+#
 
-# -------------------------------------------------------------------
+# Create a new directory and enter it
+md() {
+  mkdir -p "$@" && cd "$@"
+}
+
+# All the dig info
+digga() {
+  dig +nocmd "$1" any +multiline +noall +answer
+}
+
+#
 # MOTD / FORTUNE
-# -------------------------------------------------------------------
+#
 
 test -n "$INTERACTIVE" -a -n "$LOGIN" && {
     uname -npsr

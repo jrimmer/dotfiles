@@ -14,7 +14,7 @@ set match-hidden-files off
 # completion settings
 set page-completions off
 set completion-query-items 2000
-set completion-ignore-case off
+set completion-ignore-case on
 set show-all-if-ambiguous on
 set show-all-if-unmodified on
 set completion-prefix-display-length 10
