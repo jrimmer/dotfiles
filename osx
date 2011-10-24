@@ -1,3 +1,6 @@
+# Primarily for setting up new Macs
+# https://github.com/mathiasbynens/dotfiles
+
 # Enable full keyboard access for all controls (e.g. enable Tab in modal dialogs)
 defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
 
