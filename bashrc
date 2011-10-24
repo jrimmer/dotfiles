@@ -171,9 +171,21 @@ PS1="\[${BOLD}${MAGENTA}\]\u \[$WHITE\]at \[$ORANGE\]\h \[$WHITE\]in \[$GREEN\]\
 #
 
 # Shell
+alias ..="cd .."
+alias ...="cd ../.."
+alias la="ls -Gla"
 alias du1='du -h --max-depth=1'
 alias fn='find . -name'
 alias hi='history | tail -20'
+# Shortcuts
+alias d="cd ~/Dropbox"
+alias w="cd ~/work"
+alias g="git"
+alias v="vim"
+alias m="mate ."
+alias s="subl ."
+alias fs="stat -f \"%z bytes\""
+
 # Ruby
 alias be="bundle exec"
 
