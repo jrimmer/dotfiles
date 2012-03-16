@@ -183,8 +183,9 @@ alias w="cd ~/work"
 alias g="git"
 alias v="vim"
 alias m="mate ."
-alias s="subl ."
+alias s="subl -n ."
 alias fs="stat -f \"%z bytes\""
+alias grep='grep --color=auto'
 
 # Ruby
 alias be="bundle exec"
